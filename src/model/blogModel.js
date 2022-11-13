@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import mongoosePaginate from 'mongoose-paginate-v2';
 const comment = new mongoose.Schema({
   name: String,
   comment: String,
@@ -38,6 +38,17 @@ const blogSchema = new mongoose.Schema({
   }
 });
 
+blogSchema.plugin(mongoosePaginate);
+
 const blogModel = mongoose.model("Blog", blogSchema);
+
+const options = {
+  lean: true,
+  limit: 8,
+  page: 1,
+  forceCountFn: true,
+};
+
+blogModel.paginate({},options).then({}); 
 
 export default blogModel;

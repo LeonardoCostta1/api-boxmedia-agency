@@ -2,7 +2,10 @@ import blogModel from "../model/blogModel.js";
 
 class blogController {
   static index = (request, response) => {
-    blogModel.find({}, (err, data) => {
+
+    const page = request.query.page;
+    
+    blogModel.paginate({}, { limit: 8, page: page }, (err, data) => {
       if (err) return response.send({ error: "error to consult blog" });
       return response.json(data);
     });
@@ -44,19 +47,24 @@ class blogController {
     });
   };
 
-
   static addComment = (request, response) => {
     const id = request.params.id;
 
-    console.log(request.body)
+    console.log(request.body);
 
-    blogModel.findByIdAndUpdate(id,{ $push: { comments: [request.body] } },(err,data) => {
-      if (!err) {
-        response.status(200).send({ message: "artigo atualizado com sucesso" });
-      } else {
-        response.status(500).send({ message: err.message });
+    blogModel.findByIdAndUpdate(
+      id,
+      { $push: { comments: [request.body] } },
+      (err) => {
+        if (!err) {
+          response
+            .status(200)
+            .send({ message: "artigo atualizado com sucesso" });
+        } else {
+          response.status(500).send({ message: err.message });
+        }
       }
-    });
+    );
   };
 }
 
